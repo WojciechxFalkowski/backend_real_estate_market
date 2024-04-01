@@ -1,0 +1,14 @@
+version: '3.7'
+
+services:
+  nest_real_estate_market:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nest_real_estate_market
+    environment:
+      - PORT=3101
+    ports:
+      - '3101:3101'
+    volumes:
+      - ./src:/app/src
