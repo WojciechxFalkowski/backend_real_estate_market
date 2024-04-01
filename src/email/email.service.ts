@@ -1,33 +1,35 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
+import { SettingsService } from 'src/settings/settings.service';
+import { SERVICE_TYPES } from './email.contracts';
 
 @Injectable()
 export class EmailService {
     private transporter;
 
-    constructor() {
-        this.transporter = nodemailer.createTransport({
-            //gmail
-            service: 'gmail',
-            //outlook
-            // service: 'hotmail',
+    constructor(private settingsService: SettingsService) { }
 
+    async sendMail(email: string, phone: string, message: string): Promise<void> {
+        const userSettings = await this.settingsService.getUserSettings(1);
+        const serviceType = SERVICE_TYPES[userSettings.emailConfiguration.serviceType];
+        if (!serviceType) {
+            throw new HttpException('Invalid service type', HttpStatus.CONFLICT);
+        }
+        this.transporter = nodemailer.createTransport({
+            // outlook -> hotmail, gmail -> gmail
+            service: SERVICE_TYPES[userSettings.emailConfiguration.serviceType],
             // Konfiguracja transportu, np. SMTP
             // host: 'smtp.example.com',
             // port: 587,
             //secure: false, // true dla portu 465, false dla innych portów
             auth: {
-                user: process.env.AUTH_EMAIL,
-                pass: process.env.AUTH_PASS
+                user: userSettings.emailConfiguration.email,
+                pass: userSettings.emailConfiguration.password,
             },
         });
-    }
 
-    async sendMail(email: string, phone: string, message: string): Promise<void> {
-        console.log('email', email)
         const mailOptions = {
-            from: process.env.AUTH_EMAIL,
-            to: process.env.AUTH_EMAIL, // lista odbiorców
+            to: userSettings.emailConfiguration.email, // lista odbiorców
             subject: 'Wiadomość z formularza kontaktowego', // temat
             text: `Od: ${email}\nNumer telefonu: ${phone}\nWiadomość: ${message}`, // treść wiadomości
             // html: '<b>Witaj</b>' // możesz również użyć HTML
