@@ -12,9 +12,15 @@ export class EmailService {
     async sendMail(email: string, phone: string, message: string): Promise<void> {
         const userSettings = await this.settingsService.getUserSettings(1);
         const serviceType = SERVICE_TYPES[userSettings.emailConfiguration.serviceType];
+
+        console.log(email)
+        console.log(SERVICE_TYPES[userSettings.emailConfiguration.serviceType])
+        console.log(userSettings.emailConfiguration.email)
+        console.log(userSettings.emailConfiguration.password)
         if (!serviceType) {
             throw new HttpException('Invalid service type', HttpStatus.CONFLICT);
         }
+
         this.transporter = nodemailer.createTransport({
             // outlook -> hotmail, gmail -> gmail
             service: SERVICE_TYPES[userSettings.emailConfiguration.serviceType],
@@ -29,6 +35,7 @@ export class EmailService {
         });
 
         const mailOptions = {
+            from: userSettings.emailConfiguration.email, // adres nadawcy
             to: userSettings.emailConfiguration.email, // lista odbiorców
             subject: 'Wiadomość z formularza kontaktowego', // temat
             text: `Od: ${email}\nNumer telefonu: ${phone}\nWiadomość: ${message}`, // treść wiadomości
