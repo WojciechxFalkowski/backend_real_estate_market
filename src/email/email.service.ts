@@ -26,7 +26,7 @@ export class EmailService {
             // service: SERVICE_TYPES[userSettings.emailConfiguration.serviceType],
             // Konfiguracja transportu, np. SMTP
             // host: 'smtp.example.com',
-            service: "Outlook365",
+            service: "hotmail",
             tls:  { ciphers: 'SSLv3' },
             // host: "smtp-mail.outlook.com", // potem to smtp-mail.outlook.com
             port: 587,
