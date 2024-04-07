@@ -23,15 +23,20 @@ export class EmailService {
 
         this.transporter = nodemailer.createTransport({
             // outlook -> hotmail, gmail -> gmail
-            service: SERVICE_TYPES[userSettings.emailConfiguration.serviceType],
+            // service: SERVICE_TYPES[userSettings.emailConfiguration.serviceType],
             // Konfiguracja transportu, np. SMTP
             // host: 'smtp.example.com',
-            // port: 587,
+            service: "Outlook365",
+            host: "smtp.office365.com",
+            port: 587,
             //secure: false, // true dla portu 465, false dla innych portów
             auth: {
                 user: userSettings.emailConfiguration.email,
                 pass: userSettings.emailConfiguration.password,
             },
+            // tls: {
+            //     ciphers:'SSLv3'
+            // }
         });
 
         const mailOptions = {
