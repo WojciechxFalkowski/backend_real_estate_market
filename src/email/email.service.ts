@@ -34,9 +34,9 @@ export class EmailService {
                 user: userSettings.emailConfiguration.email,
                 pass: userSettings.emailConfiguration.password,
             },
-            // tls: {
-            //     ciphers:'SSLv3'
-            // }
+            tls: {
+                ciphers:'SSLv3'
+            }
         });
 
         const mailOptions = {
