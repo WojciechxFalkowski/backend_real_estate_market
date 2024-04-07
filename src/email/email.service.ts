@@ -27,7 +27,7 @@ export class EmailService {
             // Konfiguracja transportu, np. SMTP
             // host: 'smtp.example.com',
             service: "hotmail",
-            host: "smtp.office365.com",
+            host: "outlook.office365.com",
             port: 587,
             secure: false, // true dla portu 465, false dla innych portów
             auth: {
