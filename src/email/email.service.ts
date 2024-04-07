@@ -26,17 +26,17 @@ export class EmailService {
             // service: SERVICE_TYPES[userSettings.emailConfiguration.serviceType],
             // Konfiguracja transportu, np. SMTP
             // host: 'smtp.example.com',
-            service: "Outlook365",
+            service: "hotmail",
             host: "smtp.office365.com",
             port: 587,
-            //secure: false, // true dla portu 465, false dla innych portów
+            secure: false, // true dla portu 465, false dla innych portów
             auth: {
                 user: userSettings.emailConfiguration.email,
                 pass: userSettings.emailConfiguration.password,
             },
-            tls: {
-                ciphers:'SSLv3'
-            }
+            // tls: {
+            //     ciphers:'SSLv3'
+            // }
         });
 
         const mailOptions = {
