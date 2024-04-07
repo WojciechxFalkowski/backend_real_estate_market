@@ -27,10 +27,8 @@ export class EmailService {
             // Konfiguracja transportu, np. SMTP
             // host: 'smtp.example.com',
             service: "hotmail",
-            tls:  { ciphers: 'SSLv3' },
             // host: "smtp-mail.outlook.com", // potem to smtp-mail.outlook.com
             port: 587,
-            secure: false, // true dla portu 465, false dla innych portów
             debug: true,
             logger: true,
             auth: {
