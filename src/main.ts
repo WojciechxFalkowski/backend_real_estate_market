@@ -7,7 +7,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['log', 'error', 'warn', 'debug', 'verbose'],
   });
-  app.enableCors();
+  app.enableCors({
+    origin: ["https://wellrent-nieruchomosci.pl", "http://144.24.185.205:3100"],
+    methods: "GET,POST,PUT,DELETE,OPTIONS",
+    allowedHeaders: "Content-Type,Accept",
+  });
 
   // Validation pipe -> https://docs.nestjs.com/pipes#object-schema-validation
   app.useGlobalPipes(
