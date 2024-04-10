@@ -1,5 +1,4 @@
 version: '3.7'
-
 services:
   nest_real_estate_market:
     build:
@@ -12,3 +11,9 @@ services:
       - '3101:3101'
     volumes:
       - ./src:/app/src
+    networks:
+      - real_estate_network
+
+networks:
+  real_estate_network:
+    external: true
