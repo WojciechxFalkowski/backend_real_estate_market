@@ -7,6 +7,7 @@ export class AppService {
   }
 
   test(): string {
+    console.log('Test 123')
     return 'Test 123';
   }
 }
