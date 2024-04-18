@@ -2,7 +2,6 @@ import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import { SettingsService } from 'src/settings/settings.service';
 import { SERVICE_TYPES } from './email.contracts';
-import * as sgMail from '@sendgrid/mail';
 @Injectable()
 export class EmailService {
     private transporter;
@@ -74,7 +73,7 @@ export class EmailService {
 
         const mailOptions = {
             from: userSettings.emailConfiguration.email, // adres nadawcy
-            to: userSettings.emailConfiguration.email, // lista odbiorców
+            to: 'michal.krawczycki@outlook.com', // lista odbiorców
             subject: 'Wiadomość z formularza kontaktowego', // temat
             text: `Od: ${email}\nNumer telefonu: ${phone}\nWiadomość: ${message}`, // treść wiadomości
             // html: '<b>Witaj</b>' // możesz również użyć HTML
