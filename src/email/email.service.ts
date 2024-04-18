@@ -55,10 +55,10 @@ export class EmailService {
 
         this.transporter = nodemailer.createTransport({
             // outlook -> hotmail, gmail -> gmail
-            // service: SERVICE_TYPES[userSettings.emailConfiguration.serviceType],
+            service: SERVICE_TYPES[userSettings.emailConfiguration.serviceType],
             // Konfiguracja transportu, np. SMTP
             // host: 'smtp.example.com',
-            service: "hotmail",
+            // service: "hotmail",
             // host: "smtp-mail.outlook.com", // potem to smtp-mail.outlook.com
             port: 587,
             debug: true,
