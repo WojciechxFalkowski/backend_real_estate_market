@@ -1,3 +1,5 @@
+export const CLOUDINARY_DIRECTORY_NAME = 'CLOUDINARY_DIRECTORY_NAME'
+
 export default () => ({
     // port: parseInt(process.env.PORT, 10) || 3000,
     database: {
@@ -7,5 +9,8 @@ export default () => ({
         database_name: process.env.MYSQL_DATABASE_NAME,
         host: process.env.DATABASE_HOST,
         port: parseInt(process.env.DATABASE_PORT, 10) || 3307,
+    },
+    cloudinary: {
+        CLOUDINARY_DIRECTORY_NAME: process.env.CLOUDINARY_DIRECTORY_NAME
     }
 });
