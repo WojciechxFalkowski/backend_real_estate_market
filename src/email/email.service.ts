@@ -44,10 +44,6 @@ export class EmailService {
         const userSettings = await this.settingsService.getUserSettings(1);
         const serviceType = SERVICE_TYPES[userSettings.emailConfiguration.serviceType];
 
-        console.log(email)
-        console.log(SERVICE_TYPES[userSettings.emailConfiguration.serviceType])
-        console.log(userSettings.emailConfiguration.email)
-        console.log(userSettings.emailConfiguration.password)
         if (!serviceType) {
             throw new HttpException('Invalid service type', HttpStatus.CONFLICT);
         }

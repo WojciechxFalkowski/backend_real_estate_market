@@ -24,5 +24,6 @@ export interface FlatResponse {
 
 export interface FlatImageResponse {
     url: string,
-    imageId: string
+    imageId: string,
+    orderId: number,
 }
