@@ -124,7 +124,6 @@ export class FlatService {
         },
       ],
       location: flat.location,
-      // images: flat.images ? flat.images.map(img => img.publicId) : null,
       images,
       price: flat.price,
       currency: flat.currency,
@@ -138,14 +137,11 @@ export class FlatService {
       return this.cloudinaryService.fetchImageFromCloudinary(image.publicId)
     });
 
-    // Rozwiązujemy wszystkie obietnice równocześnie, a następnie wyciągamy URL-e obrazów
     const cloudinaryImages = await Promise.all(cloudinaryImagePromises);
-
-    // Przyjmujemy, że fetchImageFromCloudinary zwraca obiekt z właściwością 'url'
     const mappedImages: FlatImageResponse[] = cloudinaryImages.map((image, index) => {
 
       return {
-        url: image.url as string,
+        url: image.secure_url as string,
         imageId: image.public_id as string,
         orderId: images[index].order,
       }

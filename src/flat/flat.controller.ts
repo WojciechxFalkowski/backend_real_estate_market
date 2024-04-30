@@ -14,6 +14,18 @@ export class FlatController {
   constructor(
     private readonly flatService: FlatService) { }
 
+  @Public()
+  @Get()
+  public async findAll(@Request() req) {
+    return this.flatService.findAll();
+  }
+
+  @Public()
+  @Get(':url')
+  findOne(@Param('url') url: string) {
+    return this.flatService.findOneByUrl(url);
+  }
+
   @Post()
   public async create(@Request() req, @Body() createFlatDto: CreateFlatDto, @UploadedFile() file: Express.Multer.File,) {
     await this.flatService.create(createFlatDto, req.user.userId, file);
@@ -50,18 +62,6 @@ export class FlatController {
   ) {
     await this.flatService.deleteImage(+flatId, deleteFlatImageDto.publicId);
     return { message: `Zdjęcię zostało usunięte!` };
-  }
-
-  @Public()
-  @Get()
-  public async findAll(@Request() req) {
-    return this.flatService.findAll();
-  }
-
-  @Public()
-  @Get(':url')
-  findOne(@Param('url') url: string) {
-    return this.flatService.findOneByUrl(url);
   }
 
   @Patch(':id')
