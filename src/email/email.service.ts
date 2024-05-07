@@ -1,12 +1,16 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { ConflictException, HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import { SettingsService } from 'src/settings/settings.service';
-import { SERVICE_TYPES } from './email.contracts';
+import { NEWSLETTER_REPOSITORY, SERVICE_TYPES } from './email.contracts';
+import { AddToNewsletterListDto } from './dto/add-to-newsletter-list.dto';
+import { Newsletter } from './entities/newsletter.entity';
+import { Repository } from 'typeorm';
 @Injectable()
 export class EmailService {
     private transporter;
 
-    constructor(private settingsService: SettingsService) { }
+    constructor(private settingsService: SettingsService, @Inject(NEWSLETTER_REPOSITORY)
+    private newsletterRepository: Repository<Newsletter>,) { }
 
     // async sendMail(email: string, phone: string, message: string): Promise<void> {
     //     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -76,5 +80,23 @@ export class EmailService {
         };
 
         await this.transporter.sendMail(mailOptions);
+    }
+
+    public async addToNewsletterList(addToNewsletterListDto: AddToNewsletterListDto): Promise<void> {
+        const newsletterInDatabase = await this.newsletterRepository.findOne({
+            where: {
+                email: addToNewsletterListDto.email
+            }
+        })
+        if (newsletterInDatabase) {
+            throw new ConflictException("Email jest już zapisany!");
+        }
+        const newsletterEntity = new Newsletter()
+        newsletterEntity.email = addToNewsletterListDto.email
+        await this.newsletterRepository.save(newsletterEntity)
+    }
+
+    public async getEmails() {
+        return await this.newsletterRepository.find()
     }
 }
