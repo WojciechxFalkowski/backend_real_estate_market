@@ -1,6 +1,6 @@
-import { IsString, IsNotEmpty, IsObject, IsIn, IsOptional } from 'class-validator';
+import { IsString, IsOptional } from 'class-validator';
 import { OneToMany } from 'typeorm';
-import { FlatImage } from '../entities/flat.entity';
+import { FlatImage } from './../entities/flat-image.entity';
 
 export class CreateFlatDto {
     @IsString()

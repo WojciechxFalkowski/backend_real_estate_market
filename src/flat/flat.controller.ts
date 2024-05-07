@@ -8,11 +8,17 @@ import { DeleteFlatImageDto } from './dto/delete-flat-image.dto';
 import { UpdateImagesOrderDto } from './dto/update-images-order';
 
 
-@Controller('flat')
+@Controller('flats')
 export class FlatController {
 
   constructor(
     private readonly flatService: FlatService) { }
+
+  @Public()
+  @Get('active')
+  public async findActiveFlats(@Request() req) {
+    return this.flatService.findActiveFlats();
+  }
 
   @Public()
   @Get()
@@ -69,8 +75,9 @@ export class FlatController {
     return this.flatService.update(+id, updateFlatDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.flatService.remove(+id);
+  @Delete(':flatUrl')
+  public async removeFlat(@Param('flatUrl') flatUrl: string) {
+    await this.flatService.removeFlat(flatUrl);
+    return { message: `Mieszkanie zostało usunięte!` };
   }
 }

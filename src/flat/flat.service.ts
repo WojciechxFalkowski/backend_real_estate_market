@@ -4,9 +4,10 @@ import { UpdateFlatDto } from './dto/update-flat.dto';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { FLAT_REPOSITORY, FlatDetailResponse, FlatResponse, FLAT_IMAGE_REPOSITORY, FlatImageResponse } from './flat.contracts';
 import { Repository } from 'typeorm';
-import { Flat, FlatImage } from './entities/flat.entity';
+import { Flat } from './entities/flat.entity';
 import { UserService } from 'src/user/user.service';
 import { UpdateImagesOrderDto } from './dto/update-images-order';
+import { FlatImage } from './entities/flat-image.entity';
 @Injectable()
 export class FlatService {
   constructor(@Inject(FLAT_REPOSITORY)
@@ -45,6 +46,30 @@ export class FlatService {
     return await Promise.all(flats.map(flat => this.mapFlat(flat)))
   }
 
+  public async findActiveFlats(): Promise<FlatResponse[]> {
+    const flats = await this.flatRepository.find({
+      relations: {
+        images: true
+      },
+      where: {
+        isActive: true
+      }
+    })
+    return await Promise.all(flats.map(flat => this.mapFlat(flat)))
+  }
+
+  public async findAllActive(): Promise<FlatResponse[]> {
+    const flats = await this.flatRepository.find({
+      relations: {
+        images: true
+      },
+      where: {
+        isActive: true
+      }
+    })
+    return await Promise.all(flats.map(flat => this.mapFlat(flat)))
+  }
+
   public async findOne(flatId: number): Promise<Flat> {
     const flat = await this.flatRepository.findOne({
       where: {
@@ -68,6 +93,12 @@ export class FlatService {
       }
     })
 
+    if (!flat) {
+      throw new NotFoundException(
+        'Nie ma mieszkania o takim url',
+      );
+    }
+
     return await this.mapFlat(flat)
   }
 
@@ -78,18 +109,40 @@ export class FlatService {
     return updatedFlat
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} flat`;
+  public async removeFlat(flatUrl: string) {
+    try {
+      const flat = await this.findOneByUrl(flatUrl)
+
+      await Promise.all(flat.images.map(image => {
+        return this.deleteImage(flat.id, image.imageId)
+      }))
+
+      await this.flatRepository.delete({ id: flat.id })
+
+    }
+    catch (error) {
+      throw new NotFoundException(
+        error.message,
+      );
+    }
   }
 
   public async mapFlat(flat: Flat): Promise<FlatResponse> {
-    const images = await this.fetchImagesFromCloudinary(flat.images)
+    // const images = await this.fetchImagesFromCloudinary(flat.images)
+    const images: FlatImageResponse[] = flat.images.map(image => {
+      return {
+        url: image.url,
+        imageId: image.publicId,
+        orderId: image.order,
+      }
+    })
     images.sort((imageA, imageB) => imageA.orderId - imageB.orderId);
     return {
       id: flat.id,
       url: flat.url,
       title: flat.title,
       description: flat.description,
+      isActive: flat.isActive,
       // image: flat.image,
       flatDetails: [
         {
@@ -156,8 +209,8 @@ export class FlatService {
       throw new NotFoundException('Mieszkanie nie zostało znalezione.');
     }
 
-    const maxOrderNumber = Math.max(...flat.images.map((image: FlatImage) => image.order))
-
+    const flatImages = flat.images.map((image: FlatImage) => image.order)
+    const maxOrderNumber = flatImages.length > 0 ? Math.max(...flatImages) : 0
     const imageEntities: FlatImage[] = [];
 
     for (let i = 0; i < files.length; i++) {
@@ -169,11 +222,11 @@ export class FlatService {
       flatImage.publicId = publicId;
       flatImage.flat = flat;
       flatImage.order = maxOrderNumber + i + 1;
+      flatImage.url = uploadResponse.secure_url
       imageEntities.push(flatImage);
     }
 
     await this.flatImagesRepository.save(imageEntities);
-
     const updatedFlat = await this.findOne(+flatId)
 
     const images = await this.fetchImagesFromCloudinary(updatedFlat.images)

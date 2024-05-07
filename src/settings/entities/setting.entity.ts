@@ -1,5 +1,5 @@
 import { User } from 'src/user/user.entity';
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity()
 export class Setting {
@@ -18,4 +18,17 @@ export class Setting {
 
     @Column()
     userId: number; //foreign key
-} 
+
+    @Column({
+		type: 'timestamp',
+		default: () => 'CURRENT_TIMESTAMP',
+		nullable: false,
+	})
+	createdAt: Date;
+
+	@UpdateDateColumn({
+		type: 'timestamp',
+		nullable: false,
+	})
+	updatedAt: Date;
+}

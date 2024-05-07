@@ -9,6 +9,7 @@ export interface FlatDetailResponse {
 
 export interface FlatResponse {
     id: number;
+    isActive: boolean;
     url: string;
     title: string;
     description: string;

@@ -1,5 +1,6 @@
 import { User } from 'src/user/user.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { FlatImage } from './flat-image.entity';
 
 @Entity()
 export class Flat {
@@ -45,8 +46,8 @@ export class Flat {
 	@Column({ nullable: true })
 	pricePerMeter: string;
 
-	// @Column({ nullable: true })
-	// image: string;
+	@Column({ nullable: false, default: false })
+	isActive: boolean;
 
 	@OneToMany(() => FlatImage, image => image.flat)
 	images: FlatImage[];
@@ -62,22 +63,17 @@ export class Flat {
 
 	@Column()
 	userId: number; //foreign key
-}
 
-@Entity()
-export class FlatImage {
-	@PrimaryGeneratedColumn()
-	id: number;
+	@Column({
+		type: 'timestamp',
+		default: () => 'CURRENT_TIMESTAMP',
+		nullable: false,
+	})
+	createdAt: Date;
 
-	@Column()
-	publicId: string;
-
-	@ManyToOne(() => Flat, flat => flat.images)
-	flat: Flat;
-
-	@Column({ default: 0 })
-	order: number;
-
-	@Column()
-	flatId: number; //foreign key
+	@UpdateDateColumn({
+		type: 'timestamp',
+		nullable: false,
+	})
+	updatedAt: Date;
 }

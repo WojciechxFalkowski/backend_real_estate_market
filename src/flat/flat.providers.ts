@@ -1,7 +1,8 @@
 import { DATA_SOURCE } from 'src/database/database.contracts';
 import { DataSource } from 'typeorm';
-import { Flat, FlatImage } from './entities/flat.entity';
+import { Flat } from './entities/flat.entity';
 import { FLAT_REPOSITORY, FLAT_IMAGE_REPOSITORY } from './flat.contracts';
+import { FlatImage } from './entities/flat-image.entity';
 
 export const flatProvider = [
   {
