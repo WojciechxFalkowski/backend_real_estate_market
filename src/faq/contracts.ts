@@ -1,0 +1,1 @@
+export const FAQ_REPOSITORY = 'FAQ_REPOSITORY'
