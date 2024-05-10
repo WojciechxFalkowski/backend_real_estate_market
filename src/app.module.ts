@@ -12,8 +12,9 @@ import { SettingsModule } from './settings/settings.module';
 import { FlatModule } from './flat/flat.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { FaqModule } from './faq/faq.module';
+import { LeaseModule } from './lease/lease.module';
 @Module({
-  imports: [ConfigModule.forRoot({ load: [configuration], isGlobal: true, cache: true, }), DatabaseModule, AuthModule, UserModule, EmailModule, SettingsModule, FlatModule, CloudinaryModule, FaqModule],
+  imports: [ConfigModule.forRoot({ load: [configuration], isGlobal: true, cache: true, }), DatabaseModule, AuthModule, UserModule, EmailModule, SettingsModule, FlatModule, CloudinaryModule, FaqModule, LeaseModule],
   controllers: [AppController],
   providers: [AppService],
 })
