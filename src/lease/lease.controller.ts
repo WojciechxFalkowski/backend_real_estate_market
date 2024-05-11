@@ -7,10 +7,15 @@ import { Public } from 'src/auth/constants';
 export class LeaseController {
   constructor(private readonly leaseService: LeaseService) { }
 
-  @Public()
   @Get()
   public async findAll() {
-    return this.leaseService.findAll();
+    return await this.leaseService.findAll();
+  }
+
+  @Public()
+  @Get('/activeLease')
+  public async findAllActive() {
+    return await this.leaseService.findAllActive();
   }
 
   @Put()

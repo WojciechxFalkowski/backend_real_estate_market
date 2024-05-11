@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity()
 export class Lease {
@@ -16,4 +16,26 @@ export class Lease {
 
     @Column()
     classIcon: string;
+
+    @Column({ default: 40 })
+    desktopSize: number;
+
+    @Column({ nullable: false })
+    orderId: number;
+
+    @Column({ nullable: false, default: false })
+    isActive: boolean;
+
+    @Column({
+        type: 'timestamp',
+        default: () => 'CURRENT_TIMESTAMP',
+        nullable: false,
+    })
+    createdAt: Date;
+
+    @UpdateDateColumn({
+        type: 'timestamp',
+        nullable: false,
+    })
+    updatedAt: Date;
 }

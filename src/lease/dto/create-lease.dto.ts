@@ -3,4 +3,7 @@ export class CreateLeaseItemDto {
     description: string;
     icon: string;
     classIcon: string;
+    desktopSize: number;
+    orderId: number;
+    isActive: boolean;
 }
