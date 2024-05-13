@@ -13,8 +13,9 @@ import { FlatModule } from './flat/flat.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { FaqModule } from './faq/faq.module';
 import { LeaseModule } from './lease/lease.module';
+import { PageConfigurationModule } from './page-configuration/page-configuration.module';
 @Module({
-  imports: [ConfigModule.forRoot({ load: [configuration], isGlobal: true, cache: true, }), DatabaseModule, AuthModule, UserModule, EmailModule, SettingsModule, FlatModule, CloudinaryModule, FaqModule, LeaseModule],
+  imports: [ConfigModule.forRoot({ load: [configuration], isGlobal: true, cache: true, }), DatabaseModule, AuthModule, UserModule, EmailModule, SettingsModule, FlatModule, CloudinaryModule, FaqModule, LeaseModule, PageConfigurationModule],
   controllers: [AppController],
   providers: [AppService],
 })
