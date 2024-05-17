@@ -10,17 +10,17 @@ export class PageConfigurationController {
 
   @Post()
   public async create(@Body() createPageConfigurationDto: CreatePageConfigurationDto) {
-    return await this.pageConfigurationService.create(createPageConfigurationDto);
+    return await this.pageConfigurationService.create(createPageConfigurationDto); 
   }
 
-  @Public()
   @Get()
+  @Public()
   public async findAll() {
     return await this.pageConfigurationService.findAll();
   }
 
-  @Public()
   @Get(':pageUrl')
+  @Public()
   public async findOne(@Param('pageUrl') pageUrl: string) {
     return await this.pageConfigurationService.findOneByUrl(pageUrl);
   }

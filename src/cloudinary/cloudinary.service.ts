@@ -12,9 +12,10 @@ export class CloudinaryService {
 
   async uploadImage(
     file: Express.Multer.File,
+    directoryPath: string
   ): Promise<UploadApiResponse | UploadApiErrorResponse> {
     return new Promise((resolve, reject) => {
-      const upload = v2.uploader.upload_stream({ folder: this.configSerivce.get(CLOUDINARY_DIRECTORY_NAME) }, (error, result) => {
+      const upload = v2.uploader.upload_stream({ folder: this.configSerivce.get(CLOUDINARY_DIRECTORY_NAME) + directoryPath }, (error, result) => {
         if (error) return reject(error);
         resolve(result);
       });
@@ -23,8 +24,8 @@ export class CloudinaryService {
     });
   }
 
-  async uploadImageToCloudinary(file: Express.Multer.File) {
-    return await this.uploadImage(file).catch((e) => {
+  async uploadImageToCloudinary(file: Express.Multer.File, directoryPath: string = '') {
+    return await this.uploadImage(file, directoryPath).catch((e) => {
       throw new BadRequestException('Invalid file type.');
     });
   }
