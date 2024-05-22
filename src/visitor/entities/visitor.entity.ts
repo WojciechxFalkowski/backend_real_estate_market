@@ -12,6 +12,9 @@ export class Visitor {
     email?: string;
 
     @Column({ nullable: true })
+    notes?: string;
+
+    @Column({ nullable: true })
     phoneNumber?: string;
 
     @OneToOne(() => DeviceInfo, { cascade: true, eager: true })
@@ -27,7 +30,4 @@ export class Visitor {
 
     @CreateDateColumn()
     createdAt: Date;
-
-    @UpdateDateColumn()
-    updatedAt: Date;
 }
