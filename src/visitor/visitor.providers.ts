@@ -5,7 +5,7 @@ import { VISITOR_REPOSITORY, IP_INFO_REPOSITORY, DEVICE_INFO_REPOSITORY } from '
 import { IPInfo } from './entities/ip-info.entity';
 import { DeviceInfo } from './entities/device-info.entity';
 
-export const visitorProviders = [
+export const VisitorProviders = [
   {
     provide: VISITOR_REPOSITORY,
     useFactory: (dataSource: DataSource) => dataSource.getRepository(Visitor),

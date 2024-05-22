@@ -1,10 +1,9 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { DEVICE_INFO_REPOSITORY, IP_INFO_REPOSITORY, VISITOR_REPOSITORY } from './visitor.contracts';
 import { Visitor } from './entities/visitor.entity';
 import { DeviceInfo } from './entities/device-info.entity';
 import { IPInfo } from './entities/ip-info.entity';
-import { HttpService } from '@nestjs/axios';
 import { CreateDeviceInfoDto } from './dto/create-device-info.dto';
 import { CreateIPInfoDto } from './dto/create-ip-info.dto';
 
@@ -17,10 +16,9 @@ export class VisitorService {
     private readonly deviceInfoRepository: Repository<DeviceInfo>,
     @Inject(IP_INFO_REPOSITORY)
     private readonly ipInfoRepository: Repository<IPInfo>,
-    private readonly httpService: HttpService,
   ) { }
 
-  async createVisitor(deviceInfoData: CreateDeviceInfoDto, ipAddress: string): Promise<Visitor> {
+  public async createVisitor(deviceInfoData: CreateDeviceInfoDto, ipAddress: string): Promise<{ visitorId: string }> {
     const deviceInfo = this.deviceInfoRepository.create(deviceInfoData);
     await this.deviceInfoRepository.save(deviceInfo);
 
@@ -31,32 +29,69 @@ export class VisitorService {
     const visitor = new Visitor();
     visitor.deviceInfo = deviceInfo;
     visitor.ipInfo = ipInfo;
-
-    return this.visitorRepository.save(visitor);
+    const newVisitor = await this.visitorRepository.save(visitor);
+    return {
+      visitorId: newVisitor.id
+    }
   }
 
-  async getIPInfo(ipAddress: string): Promise<CreateIPInfoDto> {
-    const response = await this.httpService.get(`https://api.ipapi.com/${ipAddress}?access_key=YOUR_ACCESS_KEY`).toPromise();
-    const { country_name, country_code, region_name, city, latitude, longitude, isp, org } = response.data;
+  public async getIPInfo(ipAddress: string): Promise<CreateIPInfoDto> {
+    const response: {
+      status,
+      country,
+      countryCode,
+      region,
+      regionName,
+      city,
+      zip,
+      lat,
+      lon,
+      timezone,
+      isp,
+      org,
+      as,
+      query,
+      district
+    } = await fetch(`http://ip-api.com/json/${ipAddress}`).then(res => res.json()).then(res => res)
+
+    const {
+      country,
+      countryCode,
+      regionName,
+      city,
+      lat,
+      lon,
+      isp,
+      org
+    } = response;
+
     return {
       ipAddress,
-      country: country_name,
-      countryCode: country_code,
-      region: region_name,
+      country: country,
+      countryCode: countryCode,
+      region: regionName,
       city,
-      latitude: latitude.toString(),
-      longitude: longitude.toString(),
+      latitude: lat,
+      longitude: lon,
       isp,
       org,
     };
   }
 
-  async findVisitorById(id: string): Promise<Visitor> {
+  public async findVisitorById(id: string): Promise<Visitor> {
     return this.visitorRepository.findOne({ where: { id } });
   }
 
-  async getIpAddress(): Promise<string> {
-    const response = await this.httpService.get('https://api.ipify.org?format=json').toPromise();
-    return response.data.ip;
+  public async checkVisitor(id: string) {
+    return Boolean(await this.findVisitorById(id))
+  }
+
+  public async setVisitorEmail(id: string, email: string) {
+    const visitorEntity = await this.findVisitorById(id)
+    if (!visitorEntity) {
+      throw new NotFoundException("Visitor was not found!")
+    }
+    visitorEntity.email = email
+    await this.visitorRepository.save(visitorEntity)
   }
 }

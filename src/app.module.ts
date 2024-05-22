@@ -17,8 +17,9 @@ import { PageConfigurationModule } from './page-configuration/page-configuration
 import { TeamMembersModule } from './team-members/team-members.module';
 import { HomeCarouselImageModule } from './home-carousel-image/home-carousel-image.module';
 import { VisitorModule } from './visitor/visitor.module';
+import { AnalyticsEventsModule } from './analytics-events/analytics-events.module';
 @Module({
-  imports: [ConfigModule.forRoot({ load: [configuration], isGlobal: true, cache: true, }), DatabaseModule, AuthModule, UserModule, EmailModule, SettingsModule, FlatModule, CloudinaryModule, FaqModule, LeaseModule, PageConfigurationModule, TeamMembersModule, HomeCarouselImageModule, VisitorModule],
+  imports: [ConfigModule.forRoot({ load: [configuration], isGlobal: true, cache: true, }), DatabaseModule, AuthModule, UserModule, EmailModule, SettingsModule, FlatModule, CloudinaryModule, FaqModule, LeaseModule, PageConfigurationModule, TeamMembersModule, HomeCarouselImageModule, VisitorModule, AnalyticsEventsModule],
   controllers: [AppController],
   providers: [AppService],
 })

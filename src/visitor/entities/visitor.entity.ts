@@ -1,6 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToOne, JoinColumn, OneToMany } from 'typeorm';
 import { DeviceInfo } from './device-info.entity';
 import { IPInfo } from './ip-info.entity';
+import { AnalyticsEvent } from 'src/analytics-events/entities/analytics-event.entity';
 
 @Entity()
 export class Visitor {
@@ -20,6 +21,9 @@ export class Visitor {
     @OneToOne(() => IPInfo, { cascade: true, eager: true })
     @JoinColumn()
     ipInfo: IPInfo;
+
+    @OneToMany(() => AnalyticsEvent, analyticsEvent => analyticsEvent.visitor)
+    analyticsEvents: AnalyticsEvent[];
 
     @CreateDateColumn()
     createdAt: Date;

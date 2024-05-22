@@ -1,14 +1,13 @@
 import { Module } from '@nestjs/common';
 import { VisitorService } from './visitor.service';
 import { VisitorController } from './visitor.controller';
-import { visitorProviders } from './visitor.providers';
+import { VisitorProviders } from './visitor.providers';
 import { DatabaseModule } from 'src/database/database.module';
-import { HttpModule } from '@nestjs/axios';
 
 @Module({
-  imports: [DatabaseModule, HttpModule],
+  imports: [DatabaseModule],
   controllers: [VisitorController],
-  providers: [...visitorProviders, VisitorService],
-  exports: [],
+  providers: [...VisitorProviders, VisitorService],
+  exports: [VisitorService, ...VisitorProviders],
 })
 export class VisitorModule { }

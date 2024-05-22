@@ -10,3 +10,8 @@ export class CreateVisitorDto {
     @IsString()
     ipAddress: string;
 }
+
+export class SetVisitorEmailDto {
+    @IsString()
+    email: string;
+}
