@@ -16,8 +16,9 @@ import { LeaseModule } from './lease/lease.module';
 import { PageConfigurationModule } from './page-configuration/page-configuration.module';
 import { TeamMembersModule } from './team-members/team-members.module';
 import { HomeCarouselImageModule } from './home-carousel-image/home-carousel-image.module';
+import { VisitorModule } from './visitor/visitor.module';
 @Module({
-  imports: [ConfigModule.forRoot({ load: [configuration], isGlobal: true, cache: true, }), DatabaseModule, AuthModule, UserModule, EmailModule, SettingsModule, FlatModule, CloudinaryModule, FaqModule, LeaseModule, PageConfigurationModule, TeamMembersModule, HomeCarouselImageModule],
+  imports: [ConfigModule.forRoot({ load: [configuration], isGlobal: true, cache: true, }), DatabaseModule, AuthModule, UserModule, EmailModule, SettingsModule, FlatModule, CloudinaryModule, FaqModule, LeaseModule, PageConfigurationModule, TeamMembersModule, HomeCarouselImageModule, VisitorModule],
   controllers: [AppController],
   providers: [AppService],
 })
