@@ -21,7 +21,6 @@ export class AnalyticsEventsService {
 
     const event = this.eventRepository.create({
       type,
-      timestamp: new Date(),
       visitor,
       data,
     });
