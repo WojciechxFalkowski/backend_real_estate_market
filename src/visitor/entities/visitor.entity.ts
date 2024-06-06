@@ -30,4 +30,7 @@ export class Visitor {
 
     @CreateDateColumn()
     createdAt: Date;
+
+    @Column({ default: false })
+    isExcluded: boolean;
 }
