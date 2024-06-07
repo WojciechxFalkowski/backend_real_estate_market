@@ -3,7 +3,8 @@ import { Repository } from 'typeorm';
 import { ANALYTICS_EVENT_REPOSITORY, EventType } from './analytics-events.contracts';
 import { Visitor } from 'src/visitor/entities/visitor.entity';
 import { AnalyticsEvent } from './entities/analytics-event.entity';
-import { VISITOR_REPOSITORY } from 'src/visitor/visitor.contracts';
+import { DEVICE_INFO_REPOSITORY, VISITOR_REPOSITORY } from 'src/visitor/visitor.contracts';
+import { DeviceInfo } from 'src/visitor/entities/device-info.entity';
 
 @Injectable()
 export class AnalyticsEventsService {
@@ -12,6 +13,8 @@ export class AnalyticsEventsService {
     private readonly eventRepository: Repository<AnalyticsEvent>,
     @Inject(VISITOR_REPOSITORY)
     private readonly visitorRepository: Repository<Visitor>,
+    @Inject(DEVICE_INFO_REPOSITORY)
+    private readonly deviceInfoRepository: Repository<DeviceInfo>,
   ) { }
 
   public async createEvent(visitorId: string, type: EventType, data: any): Promise<AnalyticsEvent> {
@@ -37,43 +40,8 @@ export class AnalyticsEventsService {
     return this.eventRepository.find();
   }
 
-  // public async getPageViews(groupBy: 'day' | 'month'): Promise<{ date: string, count: number }[]> {
-  //   let formatString = '%Y-%m-%d'; // default to daily format
-  //   if (groupBy === 'month') {
-  //     formatString = '%Y-%m';
-  //   }
 
-  //   const query = `
-  //       SELECT DATE_FORMAT(timestamp, ?) as date, COUNT(*) as count
-  //       FROM analytics_event
-  //       WHERE type = 'page_view'
-  //       GROUP BY date
-  //       ORDER BY date
-  //   `;
-
-  //   return this.eventRepository.query(query, [formatString]);
-  // }
-  // public async getPageViews(groupBy: 'day' | 'month', excludedVisitors: string[]): Promise<{ date: string, count: number }[]> {
-  //   let formatString = '%Y-%m-%d'; // default to daily format
-  //   if (groupBy === 'month') {
-  //     formatString = '%Y-%m';
-  //   }
-
-  //   const excludedVisitorsQuery = excludedVisitors.length > 0 ? `AND visitorId NOT IN (${excludedVisitors.map(() => '?').join(', ')})` : '';
-
-  //   const query = `
-  //     SELECT DATE_FORMAT(timestamp, ?) as date, COUNT(*) as count
-  //     FROM analytics_event
-  //     WHERE type = 'page_view'
-  //     ${excludedVisitorsQuery}
-  //     GROUP BY date
-  //     ORDER BY date
-  //   `;
-
-  //   return this.eventRepository.query(query, [formatString, ...excludedVisitors]);
-  // }
-
-  public async getPageViews(groupBy: 'day' | 'month', excludedVisitorsString: string): Promise<{ date: string, count: number }[]> {
+  public async getPageViews(groupBy: 'day' | 'month', excludedVisitorsString: string, unique: boolean): Promise<{ date: string, count: number }[]> {
     let formatString = '%Y-%m-%d';
     if (groupBy === 'month') {
       formatString = '%Y-%m';
@@ -82,34 +50,15 @@ export class AnalyticsEventsService {
 
     const excludedCondition = excludedVisitors.length ? `AND visitorId NOT IN (${excludedVisitors.map(id => `'${id}'`).join(',')})` : '';
 
-    const query = `
-        SELECT DATE_FORMAT(timestamp, ?) as date, COUNT(*) as count
-        FROM analytics_event
-        WHERE type = 'page_view' ${excludedCondition}
-        GROUP BY date
-        ORDER BY date
-    `;
+    let query = `
+    SELECT DATE_FORMAT(timestamp, ?) as date, ${unique ? 'COUNT(DISTINCT visitorId)' : 'COUNT(*)'} as count
+    FROM analytics_event
+    WHERE type = 'page_view' ${excludedCondition}
+    GROUP BY date
+    ORDER BY date
+`
 
-    return this.eventRepository.query(query, [formatString]);
-  }
-
-  public async getUniquePageViews(groupBy: 'day' | 'month', excludedVisitors: string[]): Promise<{ date: string, count: number }[]> {
-    let formatString = '%Y-%m-%d';
-    if (groupBy === 'month') {
-      formatString = '%Y-%m';
-    }
-
-    const excludedCondition = excludedVisitors.length ? `AND visitorId NOT IN (${excludedVisitors.map(id => `'${id}'`).join(',')})` : '';
-
-    const query = `
-        SELECT DATE_FORMAT(timestamp, ?) as date, COUNT(DISTINCT visitorId) as count
-        FROM analytics_event
-        WHERE type = 'page_view' ${excludedCondition}
-        GROUP BY date
-        ORDER BY date
-    `;
-
-    return this.eventRepository.query(query, [formatString]);
+    return await this.eventRepository.query(query, [formatString]);
   }
 
   public async getExcludedVisitors(): Promise<string[]> {
@@ -118,13 +67,20 @@ export class AnalyticsEventsService {
   }
 
   public async removeExcludedVisitor(visitorId: string): Promise<void> {
-    console.log('visitorId')
-    console.log(visitorId)
     const visitor = await this.visitorRepository.findOne({ where: { id: visitorId } });
     if (!visitor) {
       throw new Error('Visitor not found');
     }
     visitor.isExcluded = !visitor.isExcluded;
     await this.visitorRepository.save(visitor);
+  }
+
+  public async getUserCountByDevice(): Promise<{ deviceType: string, count: number }[]> {
+    const query = `
+      SELECT deviceType, COUNT(*) as count
+      FROM device_info
+      GROUP BY deviceType
+    `;
+    return await this.deviceInfoRepository.query(query);
   }
 }

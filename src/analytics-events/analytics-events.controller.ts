@@ -3,7 +3,6 @@ import { AnalyticsEventsService } from './analytics-events.service';
 import { AnalyticsEvent } from './entities/analytics-event.entity';
 import { EventType } from './analytics-events.contracts';
 import { Public } from 'src/auth/constants';
-import { Visitor } from 'src/visitor/entities/visitor.entity';
 
 @Controller('analytics-events')
 export class AnalyticsEventsController {
@@ -29,41 +28,27 @@ export class AnalyticsEventsController {
     return this.analyticsEventsService.findAllEvents();
   }
 
-  // @Get('page-views')
-  // async getPageViews(@Query('groupBy') groupBy: 'day' | 'month') {
-  //   return this.analyticsEventsService.getPageViews(groupBy);
-  // }
-  // @Get('page-views')
-  // async getPageViews(
-  //   @Query('groupBy') groupBy: 'day' | 'month',
-  //   @Query('excludedVisitors') excludedVisitors: string,
-  // ) {
-  //   const excludedVisitorsArray = excludedVisitors ? excludedVisitors.split(',') : [];
-  //   return this.analyticsEventsService.getPageViews(groupBy, excludedVisitorsArray);
-  // }
   @Get('page-views')
-  async getPageViews(
+  public async getPageViews(
     @Query('groupBy') groupBy: 'day' | 'month',
-    @Query('excludedVisitors') excludedVisitors: string
+    @Query('excludedVisitors') excludedVisitors: string,
+    @Query('unique') unique: boolean
   ): Promise<{ date: string, count: number }[]> {
-    return this.analyticsEventsService.getPageViews(groupBy, excludedVisitors);
-  }
-
-  @Get('unique-page-views')
-  async getUniquePageViews(
-    @Query('groupBy') groupBy: 'day' | 'month',
-    @Query('excludedVisitors') excludedVisitors: string[]
-  ): Promise<{ date: string, count: number }[]> {
-    return this.analyticsEventsService.getUniquePageViews(groupBy, excludedVisitors);
+    return await this.analyticsEventsService.getPageViews(groupBy, excludedVisitors, unique);
   }
 
   @Get('excluded-visitors')
-  async getExcludedVisitors(): Promise<string[]> {
+  public async getExcludedVisitors(): Promise<string[]> {
     return this.analyticsEventsService.getExcludedVisitors();
   }
 
   @Delete('exclude-visitor')
-  async removeExcludedVisitor(@Body('visitorId') visitorId: string): Promise<void> {
+  public async removeExcludedVisitor(@Body('visitorId') visitorId: string): Promise<void> {
     await this.analyticsEventsService.removeExcludedVisitor(visitorId);
+  }
+
+  @Get('user-count-by-device')
+  public async getUserCountByDevice(): Promise<{ deviceType: string, count: number }[]> {
+    return await this.analyticsEventsService.getUserCountByDevice();
   }
 }
