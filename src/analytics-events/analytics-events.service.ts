@@ -101,4 +101,15 @@ export class AnalyticsEventsService {
     `;
     return await this.deviceInfoRepository.query(query);
   }
+
+  public async getUserActivityByHour(): Promise<{ hour: number, count: number }[]> {
+    const query = `
+      SELECT HOUR(timestamp) as hour, COUNT(*) as count
+      FROM analytics_event
+      WHERE type = 'page_view'
+      GROUP BY HOUR(timestamp)
+      ORDER BY hour
+    `;
+    return await this.eventRepository.query(query);
+  }
 }

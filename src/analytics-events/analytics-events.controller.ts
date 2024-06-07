@@ -61,4 +61,9 @@ export class AnalyticsEventsController {
   public async getUserCountByBrowser(): Promise<{ clientName: string, count: number }[]> {
     return await this.analyticsEventsService.getUserCountByBrowser();
   }
+
+  @Get('user-activity-by-hour')
+  public async getUserActivityByHour(): Promise<{ hour: number, count: number }[]> {
+    return await this.analyticsEventsService.getUserActivityByHour();
+  }
 }
