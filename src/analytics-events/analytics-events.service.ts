@@ -83,4 +83,13 @@ export class AnalyticsEventsService {
     `;
     return await this.deviceInfoRepository.query(query);
   }
+
+  public async getUserCountByOS(): Promise<{ osName: string, count: number }[]> {
+    const query = `
+      SELECT osName, COUNT(*) as count
+      FROM device_info
+      GROUP BY osName
+    `;
+    return await this.deviceInfoRepository.query(query);
+  }
 }
