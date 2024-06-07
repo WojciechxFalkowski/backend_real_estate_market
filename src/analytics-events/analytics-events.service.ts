@@ -92,4 +92,13 @@ export class AnalyticsEventsService {
     `;
     return await this.deviceInfoRepository.query(query);
   }
+
+  public async getUserCountByBrowser(): Promise<{ clientName: string, count: number }[]> {
+    const query = `
+      SELECT clientName, COUNT(*) as count
+      FROM device_info
+      GROUP BY clientName
+    `;
+    return await this.deviceInfoRepository.query(query);
+  }
 }

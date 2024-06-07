@@ -56,4 +56,9 @@ export class AnalyticsEventsController {
   public async getUserCountByOS(): Promise<{ osName: string, count: number }[]> {
     return await this.analyticsEventsService.getUserCountByOS();
   }
+
+  @Get('user-count-by-browser')
+  public async getUserCountByBrowser(): Promise<{ clientName: string, count: number }[]> {
+    return await this.analyticsEventsService.getUserCountByBrowser();
+  }
 }
