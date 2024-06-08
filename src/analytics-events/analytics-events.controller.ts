@@ -66,4 +66,9 @@ export class AnalyticsEventsController {
   public async getUserActivityByHour(): Promise<{ hour: number, count: number }[]> {
     return await this.analyticsEventsService.getUserActivityByHour();
   }
+
+  @Get('steps-views')
+  public async getStepsViews() {
+    return this.analyticsEventsService.getStepsViews();
+  }
 }
