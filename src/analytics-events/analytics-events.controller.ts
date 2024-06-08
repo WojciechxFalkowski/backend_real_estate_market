@@ -71,4 +71,11 @@ export class AnalyticsEventsController {
   public async getStepsViews() {
     return this.analyticsEventsService.getStepsViews();
   }
+
+  @Get('faq-clicks')
+  public async getFaqClicks() {
+    const test = await this.analyticsEventsService.getFaqClicks();
+    console.log(test)
+    return test
+  }
 }

@@ -115,17 +115,34 @@ export class AnalyticsEventsService {
 
   public async getStepsViews(): Promise<{ step: string, views: number }[]> {
     const query = `
-      SELECT 
+      SELECT
         JSON_UNQUOTE(JSON_EXTRACT(data, '$.elementDescription')) AS step, 
-        COUNT(*) AS views 
-      FROM 
-        analytics_event 
-      WHERE 
-        type = 'visibility' 
-        AND JSON_UNQUOTE(JSON_EXTRACT(data, '$.elementName')) = 'krok' 
-      GROUP BY 
+        COUNT(*) AS views
+      FROM
+        analytics_event
+      WHERE
+        type = 'visibility'
+        AND JSON_UNQUOTE(JSON_EXTRACT(data, '$.elementName')) = 'krok'
+      GROUP BY
         step
     `;
     return this.eventRepository.query(query);
+  }
+
+  public async getFaqClicks(): Promise<{
+    elementDescription: string;
+    count: number;
+  }[]> {
+    const rawData = await this.eventRepository.query(`
+      SELECT JSON_UNQUOTE(JSON_EXTRACT(data, '$.elementDescription')) AS elementDescription, COUNT(*) as count
+      FROM analytics_event
+      WHERE JSON_UNQUOTE(JSON_EXTRACT(data, '$.elementName')) = 'FAQ'
+      GROUP BY elementDescription
+    `);
+
+    return rawData.map((item) => ({
+      elementDescription: item.elementDescription,
+      count: item.count,
+    }));
   }
 }
