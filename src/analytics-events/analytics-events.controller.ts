@@ -15,17 +15,17 @@ export class AnalyticsEventsController {
     @Body('type') type: EventType,
     @Body('data') data: any,
   ): Promise<AnalyticsEvent> {
-    return this.analyticsEventsService.createEvent(visitorId, type, data);
+    return await this.analyticsEventsService.createEvent(visitorId, type, data);
   }
 
   @Get('events/visitor/:visitorId')
   public async findEventsByVisitor(@Param('visitorId') visitorId: string): Promise<AnalyticsEvent[]> {
-    return this.analyticsEventsService.findEventsByVisitor(visitorId);
+    return await this.analyticsEventsService.findEventsByVisitor(visitorId);
   }
 
   @Get('events')
   public async findAllEvents(): Promise<AnalyticsEvent[]> {
-    return this.analyticsEventsService.findAllEvents();
+    return await this.analyticsEventsService.findAllEvents();
   }
 
   @Get('page-views')
@@ -39,7 +39,7 @@ export class AnalyticsEventsController {
 
   @Get('excluded-visitors')
   public async getExcludedVisitors(): Promise<string[]> {
-    return this.analyticsEventsService.getExcludedVisitors();
+    return await this.analyticsEventsService.getExcludedVisitors();
   }
 
   @Delete('exclude-visitor')
@@ -69,13 +69,11 @@ export class AnalyticsEventsController {
 
   @Get('steps-views')
   public async getStepsViews() {
-    return this.analyticsEventsService.getStepsViews();
+    return await this.analyticsEventsService.getStepsViews();
   }
 
   @Get('faq-clicks')
   public async getFaqClicks() {
-    const test = await this.analyticsEventsService.getFaqClicks();
-    console.log(test)
-    return test
+    return await this.analyticsEventsService.getFaqClicks();
   }
 }
