@@ -125,6 +125,8 @@ export class AnalyticsEventsService {
         AND JSON_UNQUOTE(JSON_EXTRACT(data, '$.elementName')) = 'krok'
       GROUP BY
         step
+      ORDER BY
+        CAST(SUBSTRING_INDEX(step, '.', 1) AS UNSIGNED)
     `;
     return this.eventRepository.query(query);
   }
