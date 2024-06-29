@@ -131,16 +131,18 @@ export class AnalyticsEventsService {
     return this.eventRepository.query(query);
   }
 
-  public async getFaqClicks(): Promise<{
-    elementDescription: string;
-    count: number;
-  }[]> {
-    const rawData = await this.eventRepository.query(`
+  public async getFaqClicks(): Promise<{ elementDescription: string, count: number }[]> {
+    const excludedVisitors = await this.getExcludedVisitors();
+    const excludedCondition = excludedVisitors.length ? `AND visitorId NOT IN (${excludedVisitors.map(id => `'${id}'`).join(',')})` : '';
+
+    const query = `
       SELECT JSON_UNQUOTE(JSON_EXTRACT(data, '$.elementDescription')) AS elementDescription, COUNT(*) as count
       FROM analytics_event
-      WHERE JSON_UNQUOTE(JSON_EXTRACT(data, '$.elementName')) = 'FAQ'
+      WHERE JSON_UNQUOTE(JSON_EXTRACT(data, '$.elementName')) = 'FAQ' ${excludedCondition}
       GROUP BY elementDescription
-    `);
+    `;
+
+    const rawData = await this.eventRepository.query(query);
 
     return rawData.map((item) => ({
       elementDescription: item.elementDescription,

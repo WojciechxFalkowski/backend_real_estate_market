@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { UserRegistrationDataDto } from 'src/user/dto/create-user.dto';
@@ -40,6 +40,7 @@ export class AuthService {
 
   public async register(user: UserRegistrationDataDto): Promise<SafeUser | null> {
     // try {
+    throw new BadRequestException('Registration is blocked, ask administrator for permission.');
     return await this.userService.register(user);
   }
   catch(error) {
